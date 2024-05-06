@@ -50,17 +50,20 @@ public class PlayerController : MonoBehaviour {
     //private
     private Rigidbody m_rigidbody;
     private Vector3 m_direction;
-    private bool m_isCutting = false;
-    private StateType stateType = StateType.Moveing;
     private Flag m_flag;
+    private CameraController m_cameraController;
     //public
     public float moveSpeed = 1.0f;
+    public GameObject camera;
 
     // Use this for initialization
     void Start () {
         m_rigidbody = GetComponent<Rigidbody>();
-
         m_flag.Reset();
+        if (camera)
+        {
+            m_cameraController = camera.GetComponent<CameraController>();
+        }
     }
 
     // Update is called once per frame
@@ -94,16 +97,41 @@ public class PlayerController : MonoBehaviour {
     {
     }
 
-    private void OnTriggerExit(Collider collision)
-    {
-    }
+    
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.CompareTag("Gate"))
+        //if (collider.CompareTag("Gate"))
+        //{
+        //    gameObject.SetActive(false);
+        //    m_flag.Set(FlagType.GateHitting, true);
+        //}
+
+        if (collider.CompareTag("UpArea"))
         {
-            gameObject.SetActive(false);
-            m_flag.Set(FlagType.GateHitting, true);
+            if (m_cameraController)
+            {
+                m_cameraController.ChangeCameraMode(CameraController.CameraMode.Up);
+            }
+        }
+
+        if (collider.CompareTag("DownArea"))
+        {
+            if (m_cameraController)
+            {
+                m_cameraController.ChangeCameraMode(CameraController.CameraMode.Down);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider collider)
+    {
+        if (collider.CompareTag("UpArea") || collider.CompareTag("DownArea"))
+        {
+            if (m_cameraController)
+            {
+                m_cameraController.ChangeCameraMode(CameraController.CameraMode.Normal);
+            }
         }
     }
 }
